@@ -18,4 +18,11 @@ public class DownloadResponse {
     public void setResponseHeaderMap(Map<String, List<String>> responseHeaderMap) {
         this.responseHeaderMap = responseHeaderMap;
     }
+
+    @Override
+    public String toString() {
+        return "DownloadResponse{" +
+                "responseHeaderMap=" + responseHeaderMap.toString() +
+                '}';
+    }
 }

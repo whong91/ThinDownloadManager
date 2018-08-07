@@ -147,14 +147,14 @@ class DownloadDispatcher extends Thread {
             conn.setConnectTimeout(request.getRetryPolicy().getCurrentTimeout());
             conn.setReadTimeout(request.getRetryPolicy().getCurrentTimeout());
 
-            DownloadResponse downloadResponse = new DownloadResponse(conn.getHeaderFields());
-
             HashMap<String, String> customHeaders = request.getCustomHeaders();
             if (customHeaders != null) {
                 for (String headerName : customHeaders.keySet()) {
                     conn.addRequestProperty(headerName, customHeaders.get(headerName));
                 }
             }
+
+            DownloadResponse downloadResponse = new DownloadResponse(conn.getHeaderFields());
 
             // Status Connecting is set here before
             // urlConnection is trying to connect to destination.
