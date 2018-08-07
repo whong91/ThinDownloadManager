@@ -135,6 +135,9 @@ class DownloadDispatcher extends Thread {
 
         try {
             conn = (HttpURLConnection) url.openConnection();
+
+            DownloadResponse downloadResponse = new DownloadResponse(conn.getHeaderFields());
+
             File destinationFile = new File(request.getDestinationURI().getPath());
             if (destinationFile.exists()) {
                 mDownloadedCacheSize = (int) destinationFile.length();
@@ -172,10 +175,10 @@ class DownloadDispatcher extends Thread {
                         Log.d(TAG, "Existing mDownloadedCacheSize: " + mDownloadedCacheSize);
                         Log.d(TAG, "File mContentLength: " + mContentLength);
                         if (mDownloadedCacheSize == mContentLength) { // Mark as success, If end of stream already reached
-                            updateDownloadComplete(request);
+                            updateDownloadComplete(request, downloadResponse);
                             Log.d(TAG, "Download Completed");
                         } else {
-                            transferData(request, conn);
+                            transferData(request, conn, downloadResponse);
                         }
                     } else {
                         updateDownloadFailed(request, DownloadManager.ERROR_DOWNLOAD_SIZE_UNKNOWN, "Transfer-Encoding not found as well as can't know size of download, giving up");
@@ -229,7 +232,7 @@ class DownloadDispatcher extends Thread {
         }
     }
 
-    private void transferData(DownloadRequest request, HttpURLConnection conn) {
+    private void transferData(DownloadRequest request, HttpURLConnection conn, DownloadResponse response) {
         BufferedInputStream in = null;
         RandomAccessFile accessFile = null;
         cleanupDestination(request, false);
@@ -286,7 +289,7 @@ class DownloadDispatcher extends Thread {
                             "Error in writing download contents to the destination file");
                 } else {
                     // Start streaming data
-                    transferData(request, in, accessFile);
+                    transferData(request, response, in, accessFile);
                 }
             }
 
@@ -315,7 +318,7 @@ class DownloadDispatcher extends Thread {
         }
     }
 
-    private void transferData(DownloadRequest request, InputStream in, RandomAccessFile out) {
+    private void transferData(DownloadRequest request, DownloadResponse response, InputStream in, RandomAccessFile out) {
         final byte data[] = new byte[BUFFER_SIZE];
         long mCurrentBytes = mDownloadedCacheSize;
         request.setDownloadState(DownloadManager.STATUS_RUNNING);
@@ -335,7 +338,7 @@ class DownloadDispatcher extends Thread {
             }
 
             if (bytesRead == -1) { // success, end of stream already reached
-                updateDownloadComplete(request);
+                updateDownloadComplete(request, response);
                 return;
             } else if (bytesRead == Integer.MIN_VALUE) {
                 return;
@@ -449,9 +452,9 @@ class DownloadDispatcher extends Thread {
         request.setDownloadState(state);
     }
 
-    private void updateDownloadComplete(DownloadRequest request) {
+    private void updateDownloadComplete(DownloadRequest request, DownloadResponse response) {
         mDownloadedCacheSize = 0; // reset into Zero.
-        mDelivery.postDownloadComplete(request);
+        mDelivery.postDownloadComplete(request, response);
         request.setDownloadState(DownloadManager.STATUS_SUCCESSFUL);
         request.finish();
     }

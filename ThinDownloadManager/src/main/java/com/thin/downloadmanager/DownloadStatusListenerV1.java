@@ -12,7 +12,7 @@ public interface DownloadStatusListenerV1 {
      *
      * @param downloadRequest   the download request provided by the client
      */
-    void onDownloadComplete(DownloadRequest downloadRequest);
+    void onDownloadComplete(DownloadRequest downloadRequest, DownloadResponse downloadResponse);
 
 
     /**

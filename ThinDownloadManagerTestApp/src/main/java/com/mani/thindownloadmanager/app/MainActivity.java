@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.thin.downloadmanager.DefaultRetryPolicy;
 import com.thin.downloadmanager.DownloadManager;
 import com.thin.downloadmanager.DownloadRequest;
+import com.thin.downloadmanager.DownloadResponse;
 import com.thin.downloadmanager.DownloadStatusListenerV1;
 import com.thin.downloadmanager.RetryPolicy;
 import com.thin.downloadmanager.ThinDownloadManager;
@@ -272,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
     class MyDownloadDownloadStatusListenerV1 implements DownloadStatusListenerV1 {
 
         @Override
-        public void onDownloadComplete(DownloadRequest request) {
+        public void onDownloadComplete(DownloadRequest request, DownloadResponse response) {
             final int id = request.getDownloadId();
             if (id == downloadId1) {
                 mProgress1Txt.setText(request.getDownloadContext() + " id: "+id+" Completed");
