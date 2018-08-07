@@ -136,8 +136,6 @@ class DownloadDispatcher extends Thread {
         try {
             conn = (HttpURLConnection) url.openConnection();
 
-            DownloadResponse downloadResponse = new DownloadResponse(conn.getHeaderFields());
-
             File destinationFile = new File(request.getDestinationURI().getPath());
             if (destinationFile.exists()) {
                 mDownloadedCacheSize = (int) destinationFile.length();
@@ -148,6 +146,8 @@ class DownloadDispatcher extends Thread {
             conn.setInstanceFollowRedirects(false);
             conn.setConnectTimeout(request.getRetryPolicy().getCurrentTimeout());
             conn.setReadTimeout(request.getRetryPolicy().getCurrentTimeout());
+
+            DownloadResponse downloadResponse = new DownloadResponse(conn.getHeaderFields());
 
             HashMap<String, String> customHeaders = request.getCustomHeaders();
             if (customHeaders != null) {
