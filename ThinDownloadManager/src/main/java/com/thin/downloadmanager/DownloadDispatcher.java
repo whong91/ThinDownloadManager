@@ -181,7 +181,8 @@ class DownloadDispatcher extends Thread {
                             transferData(request, conn, downloadResponse);
                         }
                     } else {
-                        updateDownloadFailed(request, DownloadManager.ERROR_DOWNLOAD_SIZE_UNKNOWN, "Transfer-Encoding not found as well as can't know size of download, giving up");
+                        transferData(request, conn, downloadResponse);
+                        //updateDownloadFailed(request, DownloadManager.ERROR_DOWNLOAD_SIZE_UNKNOWN, "Transfer-Encoding not found as well as can't know size of download, giving up");
                     }
                     return;
                 case HTTP_MOVED_PERM:
